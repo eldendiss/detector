@@ -79,17 +79,17 @@ void wifi_init_sta(void)
     esp_netif_dhcpc_stop(my_sta);
 
     esp_netif_ip_info_t ip_info;
-    IP4_ADDR(&ip_info.ip, 192, 168, 1, 66);
-   	IP4_ADDR(&ip_info.gw, 192, 168, 1, 1);
-   	IP4_ADDR(&ip_info.netmask, 255, 255, 255, 0);
+    ip_info.ip.addr = ESP_IP4TOADDR(192, 168, 1, 66);
+   	ip_info.gw.addr = ESP_IP4TOADDR(192, 168, 1, 1);
+   	ip_info.netmask.addr = ESP_IP4TOADDR(255, 255, 255, 0);
 
     esp_netif_set_ip_info(my_sta, &ip_info);
 
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+    esp_wifi_init(&cfg);
 
     ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &event_handler, NULL));
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &event_handler, NULL));
-    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT,SYSTEM_EVENT_STA_DISCONNECTED,&reconnecter,NULL));
+    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT,WIFI_EVENT_AP_STADISCONNECTED,&reconnecter,NULL));
 
     wifi_config_t wifi_config = {
         .sta = {

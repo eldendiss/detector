@@ -34,13 +34,13 @@ void initMov(DendoStepper *Xc, DendoStepper *Yc, DendoStepper *Zc){
     Ys = Yc;
     Zs = Zc;
 
-    Xs->init(X_STEP, X_DIR, X_EN, TIMER_GROUP_0, TIMER_0, MICROSTEP_32, 200);
-    Ys->init(Y_STEP, Y_DIR, Y_EN, TIMER_GROUP_0, TIMER_1, MICROSTEP_32, 200);
-    Zs->init(Z_STEP, Z_DIR, Y_EN, TIMER_GROUP_1, TIMER_0, MICROSTEP_32, 200);
+    Xs->init(X_STEP, X_DIR, X_EN, MICROSTEP_32, 200);
+    Ys->init(Y_STEP, Y_DIR, Y_EN, MICROSTEP_32, 200);
+    Zs->init(Z_STEP, Z_DIR, Y_EN, MICROSTEP_32, 200);
 
-    Xs->setSpeed(500, 1000);
-    Ys->setSpeed(500, 1000);
-    Zs->setSpeed(500, 1000);
+    Xs->setSpeed(500, 1000, 1000);
+    Ys->setSpeed(500, 1000, 1000);
+    Zs->setSpeed(500, 1000, 1000);
 
     gpio_config_t sleep_c = {
         .pin_bit_mask = 1ULL << GPIO_NUM_2,
@@ -68,7 +68,7 @@ static void homeZ(){
     Zs->stop();
     vTaskDelay(1);
     //start moving towards endsw
-    Zs->setSpeed(1000, 1000);
+    Zs->setSpeed(5000, 1000, 1000);
     Zs->runPos(INT32_MIN);
 
     WHILE_BLOCK(gpio_get_level(Z_ENDSW_PIN),30000L);
@@ -83,7 +83,7 @@ static void homeZ(){
 
     WHILE_BLOCK(Zs->getState()>IDLE,100);
     //move slowly back
-    Zs->setSpeed(5000, 1000);
+    Zs->setSpeed(1000, 1000, 1000);
     Zs->runPos(-10000);
 
     WHILE_BLOCK(gpio_get_level(Z_ENDSW_PIN),20000L);
@@ -92,7 +92,7 @@ static void homeZ(){
     WHILE_BLOCK(Zs->getState()>IDLE,100);
 
     //done
-    Zs->setSpeed(3000, 1000);
+    Zs->setSpeed(3000, 1000, 1000);
     pos.Z=0;
 
 }
@@ -102,7 +102,7 @@ static void homeY(){
     Ys->stop();
     vTaskDelay(1);
     //start moving towards endsw
-    Ys->setSpeed(10000, 2000);
+    Ys->setSpeed(10000, 2000, 2000);
     Ys->runPos(INT32_MAX);
 
     WHILE_BLOCK(gpio_get_level(Y_ENDSW_PIN),60000L);
@@ -117,7 +117,7 @@ static void homeY(){
 
     WHILE_BLOCK(Ys->getState()>IDLE,100);
     //move slowly back
-    Ys->setSpeed(1000, 2000);
+    Ys->setSpeed(1000, 2000, 2000);
     Ys->runPos(10000);
 
     WHILE_BLOCK(gpio_get_level(Y_ENDSW_PIN),20000L);
@@ -126,7 +126,7 @@ static void homeY(){
     WHILE_BLOCK(Ys->getState()>IDLE,100);
 
     //done
-    Ys->setSpeed(10000, 1000);
+    Ys->setSpeed(10000, 1000, 1000);
     pos.Y=0;
 
 }
@@ -136,7 +136,7 @@ static void homeX(){
     Xs->stop();
     vTaskDelay(1);
     //start moving towards endsw
-    Xs->setSpeed(10000, 1000);
+    Xs->setSpeed(10000, 1000, 1000);
     Xs->runPos(INT32_MIN);
 
     WHILE_BLOCK(gpio_get_level(X_ENDSW_PIN),60000L);
@@ -151,7 +151,7 @@ static void homeX(){
 
     WHILE_BLOCK(Xs->getState()>IDLE,100);
     //move slowly back
-    Xs->setSpeed(5000, 1000);
+    Xs->setSpeed(5000, 1000, 1000);
     Xs->runPos(-10000);
 
     WHILE_BLOCK(gpio_get_level(X_ENDSW_PIN),20000L);
@@ -160,7 +160,7 @@ static void homeX(){
     WHILE_BLOCK(Xs->getState()>IDLE,100);
 
     //done
-    Xs->setSpeed(10000, 1000);
+    Xs->setSpeed(10000, 1000, 1000);
     pos.X=0;
 
 
